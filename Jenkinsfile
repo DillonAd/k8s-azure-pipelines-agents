@@ -3,14 +3,15 @@ stage("Deploy") {
         input(message: "Deploy?", ok: "Make it so.")
         input(message: "This can drop agents currently building projects. Are you sure?", ok: "Sure I\'m sure")
     }
-
     node {
-        var deploymentExists = sh("kubectl describe replicationController/vsts-agent", returnStatus: true)
+        checkout scm
+        
+        def deploymentExists = sh(script: "kubectl describe replicationController/vsts-agent", returnStatus: true)
 
-        if(deploymentExists) {
-            sh "kubectl rolling-update vsts-agent -f deploy.yaml"
+        if(deploymentExists == 0) {
+            sh "kubectl rolling-update vsts-agent -f ${WORKSPACE}/deploy.yaml"
         } else {
-            sh "kubectl create -f deploy.yaml"
+            sh "kubectl create -f ${WORKSPACE}/deploy.yaml"
         }
     }
 }
