@@ -5,13 +5,13 @@ stage("Deploy") {
     }
     node {
         checkout scm
-        
+
         def deploymentExists = sh(script: "kubectl describe replicationController/vsts-agent", returnStatus: true)
 
         if(deploymentExists == 0) {
-            sh "kubectl rolling-update vsts-agent -f ${WORKSPACE}/deploy.yaml"
-        } else {
-            sh "kubectl create -f ${WORKSPACE}/deploy.yaml"
+            sh "kubectl delete replicationController vsts-agent"
         }
+        
+        sh "kubectl create -f ${WORKSPACE}/deploy.yaml"
     }
 }
