@@ -9,7 +9,7 @@ stage("Deploy") {
         def deploymentExists = sh(script: "kubectl describe deployment/vsts-agent", returnStatus: true)
 
         if(deploymentExists == 0) {
-            sh "kubectl delete demployment vsts-agent"
+            sh "kubectl delete deployment vsts-agent"
         }
         
         sh "kubectl create -f ${WORKSPACE}/deploy.yaml"
